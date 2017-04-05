@@ -1,0 +1,98 @@
+declare -A _cxpgrep_data
+
+_cxpgrep_get_data()
+{
+	local i last_opt
+
+	for i in "${!_cxpgrep_data[@]}"; do
+		_cxpgrep_data[$i]=""
+	done
+
+	for i in "$@"; do
+		if [ "${i:0:1}" != "-" ]; then
+			if [ "$last_opt" != "-f" ] &&  [ "$last_opt" != "-m" ] && [ "$last_opt" != "-A" ] && [ "$last_opt" != "-B" ] && [ "$last_opt" != "-C" ] && [ "$last_opt" != "-D" ] && [ "$last_opt" != "-d" ]; then
+				[ "${_cxpgrep_data[pattern_str]}" == "" ] && _cxpgrep_data[pattern_str]=$i
+			fi
+		else
+			if [ "${i:1:1}" != "-" ]; then
+				if [ "${i//[^i]/}" != "" ]; then
+					_cxpgrep_data[h_ci]="-i"
+				fi
+				if [ "${i//[^b]/}" != "" ]; then
+					_cxpgrep_data[sed_bo1]="-e s/:/\x20(/"
+					_cxpgrep_data[sed_bo2]="-e s/:/):/"
+				fi
+			fi
+		fi
+
+		last_opt=$i
+	done
+
+	# New versions of rgrep or grep -r assume the search dir is "." if not provided.
+	# This is not true for old versions. So in here, test if cxpgrep is called from pipe or not.
+	# Calling from pipe doesn't need rgrep or the -r option for grep.
+	if test -t 0; then
+		# Standalone
+		_cxpgrep_data[mod]=0
+	else
+		# Pipe
+		_cxpgrep_data[mod]=1
+	fi
+}
+
+cxpgrep()
+{
+	_cxpgrep_get_data "$@"
+	local pattern_str=${_cxpgrep_data[pattern_str]}
+	local sed_bo1=${_cxpgrep_data[sed_bo1]}
+	local sed_bo2=${_cxpgrep_data[sed_bo2]}
+	local h_ci=${_cxpgrep_data[h_ci]}
+	local ropt=`if [[ ${_cxpgrep_data[mod]} -eq 1 ]]; then echo ""; else echo "r"; fi`
+
+	/bin/grep -sPHIn"$ropt" --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" |
+	sed -e "s/:/ +/" $sed_bo1 $sed_bo2 -e "s/:/ |\n/" |
+	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\047}"; pattern_str="${pattern_str//\'/\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
+	awk '
+		{
+			if (NR % 2 != 0) {
+				# The filename line
+				# Remove color escape sequences, coz we do not need to grep filenames.
+				gsub(/\x1b\[[0-9;]*m|\x1b\[K/, "")
+				# No \n at the end of printf, so that the context line will follow the filename line on the same output line.
+				printf "%s%s%s", "\x1b[47m\x1b[K", $0, "\x1b[m\x1b[K"
+			} else
+				# The context line
+				print $0
+		}
+	' |
+	nl
+}
+
+cxpgrep2()
+{
+	_cxpgrep_get_data "$@"
+	local pattern_str=${_cxpgrep_data[pattern_str]}
+	local sed_bo1=${_cxpgrep_data[sed_bo1]}
+	local sed_bo2=${_cxpgrep_data[sed_bo2]}
+	local h_ci=${_cxpgrep_data[h_ci]}
+	local ropt=`if [[ ${_cxpgrep_data[mod]} -eq 1 ]]; then echo ""; else echo "r"; fi`
+
+	/bin/grep -sPHIn"$ropt" --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" | nl |
+	sed -e "s/:/ +/" $sed_bo1 $sed_bo2 -e "s/:/\n/" |
+	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\047}"; pattern_str="${pattern_str//\'/\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
+	awk -v width=$(tput cols) '
+		{
+			if (NR % 2 != 0) {
+				gsub(/\x1b\[[0-9;]*m|\x1b\[K/, "")
+				format="%s%-"(int((length() - 1) / width) + 1) * width - 1"s%s"
+				# With \n at the end of printf, not only to separate filename and
+				# context into 2 lines, but also to make sure the TABs at the
+				# beginning of context line will be displayed in output. Otherwise
+				# the output will LOOK LIKE having 2 lines but the TABs at the
+				# beginning of context line will not be displayed.
+				printf format, "\x1b[47m\x1b[K", $0, "\x1b[m\x1b[K\n"
+			} else
+				print $0
+		}
+	'
+}

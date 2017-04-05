@@ -1,1 +1,2 @@
 cxpgrep linguist-language=Shell
+test_cases/* linguist-language=Shell

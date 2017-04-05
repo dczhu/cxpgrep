@@ -1,0 +1,47 @@
+# \
+echo "a\|b" | cxpgrep2 'a\\\|b'
+echo "a\|b" | cxpgrep2 "a\\\\\\|b"
+echo "a\\b|" | cxpgrep2 '\\|\|'
+echo 'at\\\\b|' | cxpgrep2 '\\\\\\|a'
+echo 'zat\\\\b|' | cxpgrep2 't\\\\\\|z'
+
+# ? * {n,m}
+echo "a\*b*c\*d*e?f\?g{h}ijk{}{}" | cxpgrep2 '\*|\?|\{|\}'
+echo "a\*b*c\*d*e?f\?g{h}ijk{}{}" | cxpgrep2 '*|?|{|}'
+echo "a\*b*c\*d*e?f\?g{h}ijk{}{}" | cxpgrep2 "\*|\?|\{|\}"
+echo "a\*b*c\*d*e?f\?g{h}ijk{}{}" | cxpgrep2 "{|}"
+
+echo "abbcccdddd" | cxpgrep2 'b?'
+echo "abbcccdddd" | cxpgrep2 'c*'
+echo "abbcccdddd" | cxpgrep2 'cc?'
+echo "abbcccdddd" | cxpgrep2 'cc*'
+echo "abbcccdddd" | cxpgrep2 'c{0,1}'
+echo "abbcccdddd" | cxpgrep2 'd{0,3}'
+echo "abbcccdddd" | cxpgrep2 'd{1,3}'
+echo "abcdefgababcde" | cxpgrep2 '(ab){2,5}'
+
+# +
+echo "abcdefgababcde" | cxpgrep2 '(ab)+'
+echo "abcde+fgababcde" | cxpgrep2 '.\+'
+
+# [ \t]
+echo "abc	def g" | cxpgrep2 '[ \t]d| g'
+echo "abc	def g" | cxpgrep2 '[	 ]d| g'
+
+# ' "
+echo "\"a.h\"" | cxpgrep2 '"a'
+echo "\"a.h\"" | cxpgrep2 'h"'
+echo "\"a.h\"" | cxpgrep2 "\"a"
+echo "\"a.h\"" | cxpgrep2 "h\""
+echo "'a.h'" | cxpgrep2 "h'|'a"
+echo "'a.h'" | cxpgrep2 "\'a|h\'"
+
+# ^ $
+echo "abcdef" | cxpgrep2 '.{2}f$|^a.{0,1}'
+echo "abcdef" | cxpgrep2 ".{2}f$|^a.?"
+
+# overlapping
+echo "abcdef" | cxpgrep2 'abc|cde|f'
+
+# complex
+echo "a\|b|c d\\\"eeef\'ghijkl" | cxpgrep2 'jk|\\\|b|e{2,3}|f?|d\\\"|l$|^a'

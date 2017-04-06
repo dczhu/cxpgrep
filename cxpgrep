@@ -27,17 +27,6 @@ _cxpgrep_get_data()
 
 		last_opt=$i
 	done
-
-	# New versions of rgrep or grep -r assume the search dir is "." if not provided.
-	# This is not true for old versions. So in here, test if cxpgrep is called from pipe or not.
-	# Calling from pipe doesn't need rgrep or the -r option for grep.
-	if test -t 0; then
-		# Standalone
-		_cxpgrep_data[mod]=0
-	else
-		# Pipe
-		_cxpgrep_data[mod]=1
-	fi
 }
 
 cxpgrep()
@@ -47,9 +36,8 @@ cxpgrep()
 	local sed_bo1=${_cxpgrep_data[sed_bo1]}
 	local sed_bo2=${_cxpgrep_data[sed_bo2]}
 	local h_ci=${_cxpgrep_data[h_ci]}
-	local ropt=`if [[ ${_cxpgrep_data[mod]} -eq 1 ]]; then echo ""; else echo "r"; fi`
 
-	/bin/grep -sPHIn"$ropt" --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" |
+	/bin/grep -sPHInr --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" |
 	sed -e "s/:/ +/" $sed_bo1 $sed_bo2 -e "s/:/ |\n/" |
 	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\047}"; pattern_str="${pattern_str//\'/\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
 	awk '
@@ -75,9 +63,8 @@ cxpgrep2()
 	local sed_bo1=${_cxpgrep_data[sed_bo1]}
 	local sed_bo2=${_cxpgrep_data[sed_bo2]}
 	local h_ci=${_cxpgrep_data[h_ci]}
-	local ropt=`if [[ ${_cxpgrep_data[mod]} -eq 1 ]]; then echo ""; else echo "r"; fi`
 
-	/bin/grep -sPHIn"$ropt" --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" | nl |
+	/bin/grep -sPHInr --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" | nl |
 	sed -e "s/:/ +/" $sed_bo1 $sed_bo2 -e "s/:/\n/" |
 	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\047}"; pattern_str="${pattern_str//\'/\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
 	awk -v width=$(tput cols) '

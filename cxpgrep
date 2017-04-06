@@ -51,7 +51,7 @@ cxpgrep()
 
 	/bin/grep -sPHIn"$ropt" --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" |
 	sed -e "s/:/ +/" $sed_bo1 $sed_bo2 -e "s/:/ |\n/" |
-	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\047}"; pattern_str="${pattern_str//\'/\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
+	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\\047}"; pattern_str="${pattern_str//\'/\\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
 	awk '
 		{
 			if (NR % 2 != 0) {
@@ -79,7 +79,7 @@ cxpgrep2()
 
 	/bin/grep -sPHIn"$ropt" --exclude=*~ --exclude-dir=.vim --exclude-dir=.git --exclude-dir=.repo --exclude-dir=.svn "$@" | nl |
 	sed -e "s/:/ +/" $sed_bo1 $sed_bo2 -e "s/:/\n/" |
-	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\047}"; pattern_str="${pattern_str//\'/\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
+	eval h $h_ci "'$(pattern_str="${pattern_str//\\\'/\\047}"; pattern_str="${pattern_str//\'/\\047}"; echo "$pattern_str" | sed -r -e "s/([^\\])\|/\1\' \'/g" -e "s/(^(\\\\\\\\)+)\|/\1\' \'/" -e "s/([^\\](\\\\\\\\)+)\|/\1\' \'/g")'" |
 	awk -v width=$(tput cols) '
 		{
 			if (NR % 2 != 0) {

@@ -23,7 +23,7 @@ cxpgrep 'PAT1|PAT2|...' FILE-OR-DIRECTORY
 ```
 Patterns will be highlighted in different colors in the output.
 * It accepts other options of `grep`.
-* To construct a Vim command line to jump to a hit line of a file, double click the file pathname and Shift + single click the line number in the `cxpgrep` output.
+* To construct a Vim command line to jump to a matching line of a file, double click the file pathname and Shift + single click the line number in the `cxpgrep`/`cxpgrep2` output.
 
 ## Note
 I designed a bunch of test cases to verify the implementation of `cxpgrep` and `cxpgrep2`. Cases can be added to the files cases\_cxpgrep and cases\_cxpgrep2, respectively. And there are 2 ways to use the cases: automated and interactive.

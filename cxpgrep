@@ -1,3 +1,7 @@
+# cxpgrep - a multi-color grep with convenient features
+# Author: Deng-Cheng Zhu <dengcheng(DOT)zhu(AT)gmail(DOT)com>
+# View demo, readme and license info at https://github.com/dczhu/cxpgrep
+
 declare -A _cxpgrep_data
 
 _cxpgrep_get_data()

@@ -46,9 +46,5 @@ Also, note that these 2 scripts are **NOT** to be run directly. They need to be 
 * 1.0
   - [x] First working code
 
-## Meta
-Deng-Cheng Zhu (dengcheng _DOT_ zhu _AT_ gmail _DOT_ com)
-
-Distributed under the MIT license. See LICENSE for more information.
-
-https://github.com/dczhu/
+## License
+This software (cxpgrep) is distributed under the [MIT license](https://github.com/dczhu/cxpgrep/blob/master/LICENSE).

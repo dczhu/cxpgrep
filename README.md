@@ -45,6 +45,8 @@ Also, note that these 2 scripts are **NOT** to be run directly. They need to be 
 ## Releases
 * 1.0
   - [x] First working code
+* 1.1
+  - [x] README and source code header comment updates
 
 ## License
 This software (cxpgrep) is distributed under the [MIT license](https://github.com/dczhu/cxpgrep/blob/master/LICENSE).

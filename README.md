@@ -12,6 +12,8 @@ A multi-color grep with convenient features
 - [x] Easy to construct command lines like `vim myfile +1270` to go to line 1270 of myfile.
 
 ## Installation
+**Doing the following should NOT spoil your existing environment - You will only get 3 new commands `h`/`cxpgrep`/`cxpgrep2` in the form of Bash function.**
+
 In ~/.bashrc:
 1. source the script [h](https://github.com/dczhu/mch/blob/master/h), which is a multi-color pattern highlighter.
 2. source the script [cxpgrep](https://github.com/dczhu/cxpgrep/blob/master/cxpgrep), which uses the command `h`. The commands `cxpgrep`/`cxpgrep2` will be available for use. `cxpgrep2` just displays the output in a format different from `cxpgrep`.
